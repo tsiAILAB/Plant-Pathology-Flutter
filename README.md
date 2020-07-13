@@ -1,5 +1,3 @@
 # FlutterApp: Get Image and send to Server
 
-Let's start with Flutter Framework with Demo App
-
-FlutterProjectSetup.docx(Flutter Environment Setup and Complete Project Guide Line)
+Flutter APP to detect plant disease backed by CNN (tensorflow model), optimized by intel distributed OpenVino Toolkit and Flask HTTP server.
