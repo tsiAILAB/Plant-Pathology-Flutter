@@ -258,28 +258,30 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
 //  EmailServerSMTP.sendEmailViaSMTP("firozsujan@gmail.com", 33446);
   openGallery() async {
     var picture;
+    var picker = new ImagePicker();
     try {
-      picture = await ImagePicker.pickImage(
+      picture = await picker.getImage(
           source: ImageSource.gallery, maxHeight: 200, maxWidth: 600);
     } catch (e) {
       Utils.showLongToast("Please try again!");
     }
     this.setState(() {
-      imageFile = picture;
+      imageFile = File(picture.path);
     });
   }
 
   openCamera() async {
     var picture;
+    var picker = new ImagePicker();
     try {
-      picture = await ImagePicker.pickImage(
+      picture = await picker.getImage(
           source: ImageSource.camera, maxHeight: 200, maxWidth: 600);
     } catch (e) {
       Utils.showLongToast("Please try again!");
     }
     Utils utils = new Utils();
     this.setState(() {
-      imageFile = picture;
+      imageFile = File(picture.path);
       var fileName;
       try {
         utils.saveImage(imageFile, fileName, plantName);
@@ -389,7 +391,7 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
         this.imageType = imageType;
         this.imageHeight = imageHeight;
         this.imageWidth = imageWidth;
-        this.imageSize = imageSize;
+        this.imageSize = imageSize.toInt();
       });
     } on Exception catch (e) {
       // TODO

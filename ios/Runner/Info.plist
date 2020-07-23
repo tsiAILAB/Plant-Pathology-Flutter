@@ -41,5 +41,21 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+
+<!-- Permission options for the `camera` group -->
+     <key>NSCameraUsageDescription</key>
+     <string>PDS would like to take picture with camera</string>
+
+    <!-- Permission option for internet -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key><true/>
+    </dict>
+
+<key>NSPhotoLibraryAddUsageDescription</key>
+<string>PDS would like to save photos from the app to your gallery</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>PDS would like to access your photo gallery for uploading images to the app</string>
+
 </dict>
 </plist>

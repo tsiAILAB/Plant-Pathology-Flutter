@@ -71,7 +71,8 @@ class _UploadImageState extends State<UploadImage> {
 
         "IMAGE": base64Image,
 //        "image_name": fileName,
-//        "plant_name": plantName,
+        "USER_NAME": userName,
+        "CROP_NAME": plantName,
         "FORMAT": imageType,
         "SIZE": imageSize,
         "SIZE_UNIT": "KB",
