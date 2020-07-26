@@ -7,10 +7,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image/image.dart' as ImageLibrary;
 import 'package:image_picker/image_picker.dart';
 import 'package:pds/models/PlantImage.dart';
-import 'package:pds/models/plant_diagnosis_response.dart';
-import 'package:pds/screens/plantdiagnosisscreen/plant_details_screen.dart';
+import 'package:pds/models/diagnosis_result.dart';
 import 'package:pds/services/request/upload_image.dart';
 import 'package:pds/utils/utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TakeImageScreen extends StatefulWidget {
   final VoidCallback signOut;
@@ -30,6 +30,7 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
   String plantName;
   String imageType = '';
   int imageHeight = 0, imageWidth = 0, imageSize = 0;
+  String userName;
 
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -42,6 +43,12 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
   String selectedPlantImageLink = 'assets/images/maze.jpg';
 
   UploadImage uploadImage = new UploadImage();
+
+  @override
+  void initState() {
+    super.initState();
+    getPref();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -255,6 +262,13 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
     Utils.gotoHomeUi(context);
   }
 
+  getPref() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      userName = preferences.getString("user");
+    });
+  }
+
 //  EmailServerSMTP.sendEmailViaSMTP("firozsujan@gmail.com", 33446);
   openGallery() async {
     var picture;
@@ -434,7 +448,8 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
                           onPressed: () {
                             if (imageFile != null) {
 //                              uploadDummyImage(imageFile, plantName);
-                              uploadImage.uploadImage(imageFile, plantName);
+                              uploadImage.uploadImage(context, imageFile,
+                                  plantName, userName, "", "");
                             } else {
                               Utils.showLongToast("Image upload failed!");
                             }
@@ -489,52 +504,53 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
   }
 
   void uploadDummyImage(File imageFile, String plantName) {
-    PlantDiagnosisResponse plantDiagnosisResponse;
+    DiagnosisResult diagnosisResponse;
     String fileName = imageFile.path.split("/").last;
     String imageType = fileName.split(".").last;
     String _diseaseName, _diagnosisResponse;
 
 //    if (plantName.toUpperCase() == "POTATO" &&
 //        fileName.toUpperCase() == "EARLY_BLIGHT") {
-    if (count == 0) {
-      _diseaseName = "Early Blight";
-      _diagnosisResponse = "Disease Found, Probability-92.75%";
-
-      plantDiagnosisResponse = new PlantDiagnosisResponse(
-          plantName, imageFile.path, _diseaseName, _diagnosisResponse);
-//    } else if (plantName.toUpperCase() == "POTATO" &&
-//        fileName.toUpperCase() == "LATE_BLIGHT") {
-    } else if (count == 1) {
-      _diseaseName = "Late Blight";
-      _diagnosisResponse = "Disease Found, Probability-98.12%";
-
-      plantDiagnosisResponse = new PlantDiagnosisResponse(
-          plantName, imageFile.path, _diseaseName, _diagnosisResponse);
-//    } else if (plantName.toUpperCase() == "POTATO" &&
-//        fileName.toUpperCase() == "HEALTHY_LEAF") {
-    } else if (count == 2) {
-      _diseaseName = "Diseas not found";
-      _diagnosisResponse = "Disease Not Found, Probability-92.75%";
-
-      plantDiagnosisResponse = new PlantDiagnosisResponse(
-          plantName, imageFile.path, _diseaseName, _diagnosisResponse);
-    } else {
-      _diseaseName = "Not a Plant";
-      _diagnosisResponse = "This is not a Plant!";
-
-      plantDiagnosisResponse = new PlantDiagnosisResponse(
-          plantName, imageFile.path, _diseaseName, _diagnosisResponse);
-      count = -1;
-    }
+//    if (count == 0) {
+//      _diseaseName = "Early Blight";
+//      _diagnosisResponse = "Disease Found, Probability-92.75%";
+//
+//      plantDiagnosisResponse = new DiagnosisResult(
+//          plantName, imageFile.path, _diseaseName, _diagnosisResponse);
+////    } else if (plantName.toUpperCase() == "POTATO" &&
+////        fileName.toUpperCase() == "LATE_BLIGHT") {
+//    } else if (count == 1) {
+//      _diseaseName = "Late Blight";
+//      _diagnosisResponse = "Disease Found, Probability-98.12%";
+//
+//      plantDiagnosisResponse = new DiagnosisResult(
+//          plantName, imageFile.path, _diseaseName, _diagnosisResponse);
+////    } else if (plantName.toUpperCase() == "POTATO" &&
+////        fileName.toUpperCase() == "HEALTHY_LEAF") {
+//    } else if (count == 2) {
+//      _diseaseName = "Diseas not found";
+//      _diagnosisResponse = "Disease Not Found, Probability-92.75%";
+//
+//      plantDiagnosisResponse = new DiagnosisResult(
+//          plantName, imageFile.path, _diseaseName, _diagnosisResponse);
+//    } else {
+//      _diseaseName = "Not a Plant";
+//      _diagnosisResponse = "This is not a Plant!";
+//
+//      plantDiagnosisResponse = new DiagnosisResult(
+//          plantName, imageFile.path, _diseaseName, _diagnosisResponse);
+//      count = -1;
+//    }
 
     count = count + 1;
 
-    Navigator.of(context).pop();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => PlantDetailsScreen(plantDiagnosisResponse)),
-    );
+//    Navigator.of(context).pop();
+//    Navigator.push(
+//      context,
+//      MaterialPageRoute(
+//          builder: (context) =>
+//              PlantDetailsScreen(userName, plantName, diagnosisResponse, )),
+//    );
   }
 }
 

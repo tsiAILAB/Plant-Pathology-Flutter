@@ -131,7 +131,7 @@ class PlantDetailsScreen extends StatelessWidget {
         onPressed: () {
           UploadImage uploadImage = new UploadImage();
           if (imageFile != null) {
-            uploadImage.uploadImage(imageFile, "imagePath");
+//            uploadImage.uploadImage(imageFile, "imagePath", "userName");
           }
         },
         backgroundColor: Colors.teal[800],

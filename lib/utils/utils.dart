@@ -24,7 +24,7 @@ class Utils {
       ///$imagePath";
       var filePath = await createDirectoryIfNotExist(firstPath);
       // copy the file to a new path
-      File newImage = await image.copy('$firstPath/$imageName.png');
+      File newImage = await image.copy('$firstPath/$imageName.jpg');
       return newImage.path;
     } catch (e) {
       print("FileSaveError: $e");
