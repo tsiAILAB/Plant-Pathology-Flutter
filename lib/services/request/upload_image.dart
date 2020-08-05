@@ -167,19 +167,25 @@ class _UploadImageState extends State<UploadImage> {
 
   void parseResponse(BuildContext context, String testRes, diseaseNames,
       String plantName, String userName, String savedImagePath) {
-    List<String> diagnosisRes = testRes.split("_");
-
+    String responseId = "";
     List<DiagnosisResult> diagnosisResults = new List<DiagnosisResult>();
-    for (int i = 0; i < diagnosisRes.length - 1; i++) {
-      String diseaseName = diseaseNames[i];
-      String diagnosis = diagnosisRes[i];
+    if (testRes != null && testRes != "" && testRes != "NO") {
+      List<String> diagnosisRes = testRes.split("_");
+      for (int i = 0; i < diagnosisRes.length - 1; i++) {
+        String diseaseName = diseaseNames[i];
+        String diagnosis = diagnosisRes[i];
+        DiagnosisResult diagnosisResult = new DiagnosisResult();
+        diagnosisResult.diseaseName = diseaseName;
+        diagnosisResult.diagnosisResponse = diagnosis;
+        diagnosisResults.add(diagnosisResult);
+      }
+      responseId = diagnosisRes[diagnosisRes.length - 1];
+    } else {
       DiagnosisResult diagnosisResult = new DiagnosisResult();
-      diagnosisResult.diseaseName = diseaseName;
-      diagnosisResult.diagnosisResponse = diagnosis;
+      diagnosisResult.diseaseName = "This is not a Plant!";
+      diagnosisResult.diagnosisResponse = "100";
       diagnosisResults.add(diagnosisResult);
     }
-
-    String responseId = diagnosisRes[diagnosisRes.length - 1];
 
     Navigator.of(context).pop();
     Navigator.push(
