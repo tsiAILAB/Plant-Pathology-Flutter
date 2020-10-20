@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image/image.dart' as ImageLibrary;
 import 'package:image_picker/image_picker.dart';
@@ -31,6 +32,46 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
   String imageType = '';
   int imageHeight = 0, imageWidth = 0, imageSize = 0;
   String userName;
+
+  //nativeCall
+  static const platformMethodChannel =
+      const MethodChannel('heartbeat.fritz.ai/native');
+  String nativeMessage = '';
+
+  Future<Null> _grabCutImage(var imageFilePath, var imageName) async {
+    String _message;
+    try {
+      final String result = await platformMethodChannel
+          .invokeMethod('grabCutImage', <String, dynamic>{
+        'param1': imageFilePath,
+        'param2': imageName,
+      });
+      _message = result;
+    } on PlatformException catch (e) {
+      _message = "Can't do native stuff ${e.message}.";
+    }
+    setState(() {
+      nativeMessage = _message;
+    });
+  }
+
+  Future<Null> _isBlurOrTooDarkTooBrightImage(
+      var imageFilePath, var imageName) async {
+    String _message;
+    try {
+      final String result = await platformMethodChannel
+          .invokeMethod('isBlurOrTooDarkTooBrightImage', <String, dynamic>{
+        'param1': imageFilePath,
+        'param2': imageName,
+      });
+      _message = result;
+    } on PlatformException catch (e) {
+      _message = "Can't do native stuff ${e.message}.";
+    }
+    setState(() {
+      nativeMessage = _message;
+    });
+  }
 
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -448,10 +489,27 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
                           onPressed: () {
                             if (imageFile != null) {
 //                              uploadDummyImage(imageFile, plantName);
-                              uploadImage.uploadImage(context, imageFile,
-                                  plantName, userName, "", "");
+                              //check blur
+                              var fileName = imageFile.path.split("/").last;
+                              //check tooDark or tooBright
+                              String isBlurOrTooDarkTooBrightImage =
+                                  _isBlurOrTooDarkTooBrightImage(
+                                      imageFile.path, fileName) as String;
+                              if (isBlurOrTooDarkTooBrightImage != "true") {
+                                String grabCutImageFile =
+                                    _grabCutImage(imageFile.path, fileName)
+                                        as String;
+                                var grabCutFileName =
+                                    grabCutImageFile.split("/").last;
+                                // uploadImage.uploadImage(context, grabCutImageFile,
+                                //     plantName, userName, "", "");
+                              } else {
+                                Utils.showLongToast("Image upload failed!");
+                                // Utils.showLongToast("Image diagnosis failed!");
+                              }
                             } else {
                               Utils.showLongToast("Image upload failed!");
+                              // Utils.showLongToast("Image diagnosis failed!");
                             }
 //                            Navigator.pop(context);
                           },
@@ -472,7 +530,7 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
                               content: new Row(
                                 children: <Widget>[
                                   new CircularProgressIndicator(),
-                                  new Text("  Uploading...")
+                                  new Text("  running diagnosis...")
                                 ],
                               ),
                             ));
