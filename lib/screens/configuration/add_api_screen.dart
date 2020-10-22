@@ -3,10 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:pds/models/ApiUrl.dart';
 import 'package:pds/services/apis/all_apis.dart';
 import 'package:pds/services/response/api_url_response.dart';
 import 'package:pds/utils/utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddApiScreen extends StatefulWidget {
   @override
@@ -25,6 +27,7 @@ class _AddApiScreenState extends State<AddApiScreen> implements ApiUrlCallBack {
   final TextEditingController _apiUrlTextController =
       new TextEditingController();
   String _apiUrl;
+  bool isSendImageToServer;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +44,25 @@ class _AddApiScreenState extends State<AddApiScreen> implements ApiUrlCallBack {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: <Widget>[
+                      FlutterSwitch(
+                        width: 55.0,
+                        height: 25.0,
+                        valueFontSize: 12.0,
+                        toggleSize: 18.0,
+                        value: isSendImageToServer,
+                        onToggle: (val) {
+                          savePref(val);
+                          setState(() {
+                            isSendImageToServer = val;
+                          });
+                        },
+                      ),
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          "SendImageToServer: $isSendImageToServer",
+                        ),
+                      ),
                       Text('Update API',
                           style: TextStyle(
                               color: Colors.blueGrey,
@@ -120,6 +142,21 @@ class _AddApiScreenState extends State<AddApiScreen> implements ApiUrlCallBack {
         ),
       ),
     );
+  }
+
+  getPref() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      isSendImageToServer = preferences.getBool("imageToServer");
+    });
+  }
+
+  savePref(bool imageToServer) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      preferences.setBool("imageToServer", imageToServer);
+      preferences.commit();
+    });
   }
 
   @override

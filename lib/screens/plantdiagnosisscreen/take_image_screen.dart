@@ -9,7 +9,9 @@ import 'package:image/image.dart' as ImageLibrary;
 import 'package:image_picker/image_picker.dart';
 import 'package:pds/models/PlantImage.dart';
 import 'package:pds/models/diagnosis_result.dart';
+import 'package:pds/screens/plantdiagnosisscreen/plant_details_screen.dart';
 import 'package:pds/services/request/upload_image.dart';
+import 'package:pds/services/tflitemodelservice/check_image_with_tflite.dart';
 import 'package:pds/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,13 +34,13 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
   String imageType = '';
   int imageHeight = 0, imageWidth = 0, imageSize = 0;
   String userName;
+  bool isSendImageToServer = false;
 
   //nativeCall
   static const platformMethodChannel =
       const MethodChannel('heartbeat.fritz.ai/native');
-  String nativeMessage = '';
 
-  Future<Null> _grabCutImage(var imageFilePath, var imageName) async {
+  _grabCutImage(var imageFilePath, var imageName) async {
     String _message;
     try {
       final String result = await platformMethodChannel
@@ -50,27 +52,28 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
     } on PlatformException catch (e) {
       _message = "Can't do native stuff ${e.message}.";
     }
-    setState(() {
-      nativeMessage = _message;
-    });
+    print("nativeMessageGrabCut: $_message");
+    return _message;
   }
 
-  Future<Null> _isBlurOrTooDarkTooBrightImage(
-      var imageFilePath, var imageName) async {
+  _isBlurOrTooDarkTooBrightImage(var imageFilePath, var imageName) async {
     String _message;
     try {
-      final String result = await platformMethodChannel
+      final bool result = await platformMethodChannel
           .invokeMethod('isBlurOrTooDarkTooBrightImage', <String, dynamic>{
         'param1': imageFilePath,
         'param2': imageName,
       });
-      _message = result;
+      if (result)
+        _message = "true";
+      else
+        _message = "false";
+
+      print("isBlurOrTooDarkTooBrightImage_message: $_message");
     } on PlatformException catch (e) {
       _message = "Can't do native stuff ${e.message}.";
     }
-    setState(() {
-      nativeMessage = _message;
-    });
+    return _message;
   }
 
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -89,10 +92,18 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
   void initState() {
     super.initState();
     getPref();
+
+    //Load TFLite model
+    CheckImageWithTFLite checkImageWithTFLite = new CheckImageWithTFLite();
+    checkImageWithTFLite.loadTFLiteModel();
   }
 
   @override
   Widget build(BuildContext context) {
+    //Load TFLite model
+    // CheckImageWithTFLite checkImageWithTFLite = new CheckImageWithTFLite();
+    // checkImageWithTFLite.loadTFLiteModel();
+
     selectedPlantName = this.plantName;
     switch (selectedPlantName) {
       case "Potato":
@@ -196,104 +207,10 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
                 ),
               ],
             ),
-//            RaisedButton.icon(
-//              shape: RoundedRectangleBorder(
-//                  borderRadius: BorderRadius.circular(20.0)),
-//              icon: Icon(
-//                Icons.cloud_upload,
-//                color: Colors.white,
-//              ),
-//              color: Colors.teal[900],
-//              textColor: Colors.white,
-//              label: Text("Upload Image"),
-//              onPressed: () {
-//                UploadImage uploadImage = new UploadImage();
-//                if (imageFile != null) {
-//                  uploadImage.uploadImage(imageFile, this.plantName);
-//                } else {
-//                  showDialog<void>(
-//                    context: context,
-////                    barrierDismissible: barrierDismissible,
-//                    // false = user must tap button, true = tap outside dialog
-//                    builder: (BuildContext dialogContext) {
-//                      return AlertDialog(
-//                        backgroundColor: Colors.amber[100],
-//                        title: Text('Alert!'),
-//                        content:
-//                            Text('Please pic an image from Camera or Gallery.'),
-//                        actions: <Widget>[
-//                          FlatButton(
-//                            child: Text(
-//                              'Ok',
-//                              style: TextStyle(color: Colors.black),
-//                            ),
-//                            color: Colors.amber[200],
-//                            onPressed: () {
-//                              Navigator.of(dialogContext)
-//                                  .pop(); // Dismiss alert dialog
-//                            },
-//                          ),
-//                        ],
-//                      );
-//                    },
-//                  );
-//                }
-//              },
-//            ),
-//            RaisedButton.icon(
-//              shape: RoundedRectangleBorder(
-//                  borderRadius: BorderRadius.circular(20.0)),
-//              onPressed: () {
-//                openHighResolutionsCamera();
-//              },
-//              icon: Icon(
-//                Icons.add_a_photo,
-//                color: Colors.white,
-//              ),
-//              color: Colors.teal[900],
-//              textColor: Colors.white,
-//              label: Text(
-//                'High Resulation Picture',
-//                style: TextStyle(color: Colors.white),
-//              ),
-//            ),
-//            FlatButton(
-//              onPressed: () {
-//                Navigator.push(
-//                  context,
-//                  MaterialPageRoute(builder: (context) => LandingScreen()),
-//                );
-//              },
-//              child: Text('Landing Screen'),
-//            ),
-//            FlatButton(
-//              onPressed: () {
-//                Navigator.push(
-//                  context,
-//                  MaterialPageRoute(builder: (context) => SignUpPage()),
-//                );
-//              },
-//              child: Text('Sign Up Screen'),
-//            )
           ],
         ),
       ),
     );
-  }
-
-  openHighResolutionsCamera() async {
-    // Obtain a list of the available cameras on the device.
-//    final cameras = await availableCameras();
-
-    // Get a specific camera from the list of available cameras.
-//    final firstCamera = cameras.first;
-//    Navigator.push(
-//      context,
-//      MaterialPageRoute(
-//          builder: (context) => TakePictureScreen(
-//                camera: firstCamera,
-//              )),
-//    );
   }
 
   signOut() {
@@ -307,6 +224,7 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
       userName = preferences.getString("user");
+      isSendImageToServer = preferences.getBool("imageToServer");
     });
   }
 
@@ -486,32 +404,97 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
                     children: <Widget>[
                       GestureDetector(
                         child: OutlineButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (imageFile != null) {
 //                              uploadDummyImage(imageFile, plantName);
                               //check blur
                               var fileName = imageFile.path.split("/").last;
                               //check tooDark or tooBright
                               String isBlurOrTooDarkTooBrightImage =
-                                  _isBlurOrTooDarkTooBrightImage(
+                                  await _isBlurOrTooDarkTooBrightImage(
                                       imageFile.path, fileName) as String;
-                              if (isBlurOrTooDarkTooBrightImage != "true") {
-                                String grabCutImageFile =
-                                    _grabCutImage(imageFile.path, fileName)
-                                        as String;
-                                var grabCutFileName =
-                                    grabCutImageFile.split("/").last;
-                                // uploadImage.uploadImage(context, grabCutImageFile,
-                                //     plantName, userName, "", "");
+                              // Utils.showLongToast(
+                              //     "Image! " + isBlurOrTooDarkTooBrightImage);
+
+                              print(
+                                  "isBlurOrTooDarkTooBrightImage: $isBlurOrTooDarkTooBrightImage");
+                              if (isBlurOrTooDarkTooBrightImage == "false") {
+                                String grabCutImageFile = await _grabCutImage(
+                                    imageFile.path, fileName) as String;
+
+                                print("grabCutImageFile: " + grabCutImageFile);
+
+                                if (isSendImageToServer) {
+                                  var grabCutFileName =
+                                      grabCutImageFile.split("/").last;
+                                  uploadImage.uploadImage(
+                                      context,
+                                      new File(grabCutImageFile),
+                                      plantName,
+                                      userName,
+                                      "",
+                                      "");
+                                } else {
+                                  //check image by TFLite model
+                                  List res;
+                                  CheckImageWithTFLite checkImageWithTFLite =
+                                      new CheckImageWithTFLite();
+                                  if (grabCutImageFile != null) {
+                                    res = await checkImageWithTFLite
+                                        .applyModelOnImage(
+                                            new File(grabCutImageFile)) as List;
+                                  } else {
+                                    res = await checkImageWithTFLite
+                                        .applyModelOnImage(imageFile) as List;
+                                  }
+                                  String str = res[0]["label"];
+                                  String _name = str.substring(0);
+                                  String prediction =
+                                      (res[0]['confidence'] * 100)
+                                          .toString()
+                                          .substring(0, 5);
+
+                                  print("name: $_name");
+                                  print("prediction: " + prediction + "%");
+
+                                  DiagnosisResult diagnosisResult =
+                                      new DiagnosisResult();
+                                  diagnosisResult.diseaseName = _name;
+                                  diagnosisResult.diagnosisResponse =
+                                      prediction;
+
+                                  List<DiagnosisResult> diagnosisResults =
+                                      new List<DiagnosisResult>();
+                                  diagnosisResults.add(diagnosisResult);
+
+                                  Navigator.of(context).pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            PlantDetailsScreen(
+                                                userName,
+                                                plantName,
+                                                diagnosisResults,
+                                                imageFile.path,
+                                                "0")),
+                                  );
+                                  // Utils.showLongToast("Name: " +
+                                  //     str +
+                                  //     " probability: " +
+                                  //     prediction +
+                                  //     "%");
+                                }
                               } else {
-                                Utils.showLongToast("Image upload failed!");
+                                Utils.showLongToast(
+                                    "Please take another Image!");
                                 // Utils.showLongToast("Image diagnosis failed!");
                               }
                             } else {
                               Utils.showLongToast("Image upload failed!");
                               // Utils.showLongToast("Image diagnosis failed!");
                             }
-//                            Navigator.pop(context);
+                            Navigator.pop(context);
                           },
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0)),

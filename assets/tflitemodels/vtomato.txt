@@ -1,0 +1,5 @@
+earlyblight
+healthy
+lateblight
+leafcurl
+leafmold
