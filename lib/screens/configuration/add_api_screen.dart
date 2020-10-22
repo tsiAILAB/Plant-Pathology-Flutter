@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_switch/flutter_switch.dart';
 import 'package:pds/models/ApiUrl.dart';
 import 'package:pds/services/apis/all_apis.dart';
 import 'package:pds/services/response/api_url_response.dart';
@@ -30,6 +29,13 @@ class _AddApiScreenState extends State<AddApiScreen> implements ApiUrlCallBack {
   bool isSendImageToServer;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getPref();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scrollbar(
       child: SafeArea(
@@ -44,24 +50,15 @@ class _AddApiScreenState extends State<AddApiScreen> implements ApiUrlCallBack {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: <Widget>[
-                      FlutterSwitch(
-                        width: 55.0,
-                        height: 25.0,
-                        valueFontSize: 12.0,
-                        toggleSize: 18.0,
+                      SwitchListTile(
+                        title: const Text('ToCloud: '),
                         value: isSendImageToServer,
-                        onToggle: (val) {
-                          savePref(val);
+                        onChanged: (bool value) {
+                          savePref(value);
                           setState(() {
-                            isSendImageToServer = val;
+                            isSendImageToServer = value;
                           });
                         },
-                      ),
-                      Container(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          "SendImageToServer: $isSendImageToServer",
-                        ),
                       ),
                       Text('Update API',
                           style: TextStyle(
@@ -147,7 +144,7 @@ class _AddApiScreenState extends State<AddApiScreen> implements ApiUrlCallBack {
   getPref() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
-      isSendImageToServer = preferences.getBool("imageToServer");
+      isSendImageToServer = preferences.getBool("imageToServer") ?? false;
     });
   }
 

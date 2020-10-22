@@ -224,7 +224,7 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
       userName = preferences.getString("user");
-      isSendImageToServer = preferences.getBool("imageToServer");
+      isSendImageToServer = preferences.getBool("imageToServer") ?? false;
     });
   }
 
@@ -384,11 +384,12 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
 //
 //  }
 
-  _showDecisionDialog(BuildContext context, File imageFile, String plantName) {
+  _showDecisionDialog(
+      BuildContext dialogContext, File imageFile, String plantName) {
     UploadImage uploadImage = new UploadImage();
 
     return showDialog(
-        context: context,
+        context: dialogContext,
         builder: (BuildContext context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
@@ -423,10 +424,12 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
                                     imageFile.path, fileName) as String;
 
                                 print("grabCutImageFile: " + grabCutImageFile);
+                                print(
+                                    "isSendImageToServer: $isSendImageToServer");
 
                                 if (isSendImageToServer) {
-                                  var grabCutFileName =
-                                      grabCutImageFile.split("/").last;
+                                  // var grabCutFileName =
+                                  //     grabCutImageFile.split("/").last;
                                   uploadImage.uploadImage(
                                       context,
                                       new File(grabCutImageFile),
@@ -467,9 +470,29 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
                                       new List<DiagnosisResult>();
                                   diagnosisResults.add(diagnosisResult);
 
-                                  Navigator.of(context).pop();
+                                  //print result
+                                  // var diagnosisResultText = "";
+                                  // for (var i = 0;
+                                  //     i < diagnosisResults.length;
+                                  //     i++) {
+                                  //   diagnosisResultText = diagnosisResultText +
+                                  //       "Disease Name: " +
+                                  //       diagnosisResults[i].diseaseName +
+                                  //       "\nProbability: " +
+                                  //       diagnosisResults[i].diagnosisResponse +
+                                  //       "%\n";
+                                  //
+                                  //   if (i != diagnosisResults.length - 1) {
+                                  //     diagnosisResultText =
+                                  //         diagnosisResultText + "\n";
+                                  //   }
+                                  // }
+                                  // print(
+                                  //     "DiagnosisResult: $diagnosisResultText");
+
+                                  // Navigator.of(context).pop();
                                   Navigator.push(
-                                    context,
+                                    dialogContext,
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             PlantDetailsScreen(
@@ -479,11 +502,13 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
                                                 imageFile.path,
                                                 "0")),
                                   );
-                                  // Utils.showLongToast("Name: " +
-                                  //     str +
-                                  //     " probability: " +
-                                  //     prediction +
-                                  //     "%");
+
+                                  // Navigator.of(context).pop();
+                                  Utils.showLongToast("Name: " +
+                                      str +
+                                      " probability: " +
+                                      prediction +
+                                      "%");
                                 }
                               } else {
                                 Utils.showLongToast(

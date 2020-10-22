@@ -33,6 +33,7 @@ class CheckImageWithTFLite {
       tfModels.add(tfLiteModel);
 
       var i = 0;
+      //load TFLite models
       for (final tfModel in tfModels) {
         var result =
             await Tflite.loadModel(model: tfModel.model, labels: tfModel.label);

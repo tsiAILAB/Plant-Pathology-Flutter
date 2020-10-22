@@ -38,6 +38,7 @@ class _PlantDetailsScreen extends State<PlantDetailsScreen> {
   Widget build(BuildContext context) {
 //    File imageFile = new File(this.imagePath);
 
+    print("DiagnosisResultStart");
     var diagnosisResultText = "";
     for (var i = 0; i < diagnosisResults.length; i++) {
       diagnosisResultText = diagnosisResultText +
@@ -51,6 +52,7 @@ class _PlantDetailsScreen extends State<PlantDetailsScreen> {
         diagnosisResultText = diagnosisResultText + "\n";
       }
     }
+    print("DiagnosisResult: $diagnosisResultText");
 
     return Scaffold(
       backgroundColor: Colors.white,
