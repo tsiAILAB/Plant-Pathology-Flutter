@@ -137,7 +137,7 @@ public class ImageGrabCutService {
             boolean isTooBrightOrDark = ImageBlurrinessDetector.isImageTooBrightOrTooDark(uploadImageFileName, imageUploadFilePath);
             System.out.println("isTooBrightOrDark: " + isTooBrightOrDark);
             if (isBlurred) {
-                Toast.makeText(context, "The image is blur. Please take another picture", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "The image is blurred. Please take another picture", Toast.LENGTH_LONG).show();
                 return true;
             } else if (isTooBrightOrDark) {
                 Toast.makeText(context, "The image is too bright or dark. Please take another picture", Toast.LENGTH_LONG).show();

@@ -266,7 +266,7 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
     try {
       if (imageFile != null) {
         getImageDetails(imageFile);
-        Utils.showLongToast("Image loading successful!");
+        Utils.showLongToast("Thanks for uploading the photo");
 //      _showImageUploadSuccessfullyDialog(context);
         return Column(
             mainAxisAlignment: MainAxisAlignment.center,
