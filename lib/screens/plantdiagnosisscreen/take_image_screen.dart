@@ -50,7 +50,8 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
       });
       _message = result;
     } on PlatformException catch (e) {
-      _message = "Can't do native stuff ${e.message}.";
+      // _message = "Can't do native stuff ${e.message}.";
+      _message = "CANT_DO_NATIVE";
     }
     print("nativeMessageGrabCut: $_message");
     return _message;
@@ -71,7 +72,8 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
 
       print("isBlurOrTooDarkTooBrightImage_message: $_message");
     } on PlatformException catch (e) {
-      _message = "Can't do native stuff ${e.message}.";
+      // _message = "Can't do native stuff ${e.message}.";
+      _message = "CANT_DO_NATIVE";
     }
     return _message;
   }
@@ -95,7 +97,7 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
 
     //Load TFLite model
     CheckImageWithTFLite checkImageWithTFLite = new CheckImageWithTFLite();
-    checkImageWithTFLite.loadTFLiteModel();
+    checkImageWithTFLite.loadTFLiteModel(this.plantName);
   }
 
   @override
@@ -288,15 +290,20 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
                   ],
                 ),
               ),
-              IconButton(
-                icon: Icon(
-                  Icons.cloud_upload,
-                  size: 50,
-                  color: Colors.blueGrey,
+              FlatButton(
+                color: Colors.blueGrey,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0)),
+                child: Text(
+                  "Analyze",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0),
                 ),
-                tooltip: 'Upload Image to the Server',
                 onPressed: () {
-                  _showDecisionDialog(context, imageFile, plantName);
+                  _onLoading(context, imageFile, plantName);
+                  // _showDecisionDialog(context, imageFile, plantName);
                 },
               ),
               SizedBox(height: 10),
@@ -322,7 +329,8 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
         icon: Icon(Icons.file_upload),
         tooltip: 'Upload Image to the Server',
         onPressed: () {
-          _showDecisionDialog(context, imageFile, plantName);
+          // _showDecisionDialog(context, imageFile, plantName);
+          _onLoading(context, imageFile, plantName);
         },
       );
     } else {
@@ -358,7 +366,7 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
       imageSize = image.length / 1024;
 
       log('Height: $imageHeight');
-      log('weidth: $imageWidth');
+      log('width: $imageWidth');
 
       setState(() {
         this.imageType = imageType;
@@ -567,6 +575,141 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
             ),
           );
         });
+  }
+
+  void _onLoading(BuildContext context, File imageFile, String plantName) {
+    BuildContext dialogContext;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        dialogContext = context;
+        return Dialog(
+          backgroundColor: Colors.white,
+          child: new Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 10.0,
+                height: 60.0,
+              ),
+              new CircularProgressIndicator(),
+              new Text(
+                "   Analyzing...",
+                style: TextStyle(
+                    color: Colors.blueGrey,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    new Future.delayed(new Duration(seconds: 3), () {
+      Navigator.pop(dialogContext);
+      _diagnoseTheImage(context, imageFile, plantName);
+    });
+  }
+
+  _diagnoseTheImage(
+      BuildContext context, File imageFile, String plantName) async {
+    if (imageFile != null) {
+//     uploadDummyImage(imageFile, plantName);
+      //check blur
+      var fileName = imageFile.path.split("/").last;
+      //check tooDark or tooBright
+      String isBlurOrTooDarkTooBrightImage =
+          await _isBlurOrTooDarkTooBrightImage(imageFile.path, fileName)
+              as String;
+      // Utils.showLongToast(
+      //     "Image! " + isBlurOrTooDarkTooBrightImage);
+
+      print("isBlurOrTooDarkTooBrightImage: $isBlurOrTooDarkTooBrightImage");
+      if (isBlurOrTooDarkTooBrightImage == "false") {
+        String grabCutImageFile =
+            await _grabCutImage(imageFile.path, fileName) as String;
+
+        print("grabCutImageFile: " + grabCutImageFile);
+        print("isSendImageToServer: $isSendImageToServer");
+
+        if (isSendImageToServer) {
+          // var grabCutFileName =
+          //     grabCutImageFile.split("/").last;
+          uploadImage.uploadImage(
+              context, new File(grabCutImageFile), plantName, userName, "", "");
+        } else {
+          //check image by TFLite model
+          List res;
+          CheckImageWithTFLite checkImageWithTFLite =
+              new CheckImageWithTFLite();
+          if (grabCutImageFile != null) {
+            res = await checkImageWithTFLite
+                .applyModelOnImage(new File(grabCutImageFile)) as List;
+          } else {
+            res =
+                await checkImageWithTFLite.applyModelOnImage(imageFile) as List;
+          }
+          String str = res[0]["label"];
+          String _name = str.substring(0);
+          String prediction =
+              (res[0]['confidence'] * 100).toString().substring(0, 5);
+
+          print("name: $_name");
+          print("prediction: " + prediction + "%");
+
+          DiagnosisResult diagnosisResult = new DiagnosisResult();
+          diagnosisResult.diseaseName = _name;
+          diagnosisResult.diagnosisResponse = prediction;
+
+          List<DiagnosisResult> diagnosisResults = new List<DiagnosisResult>();
+          diagnosisResults.add(diagnosisResult);
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PlantDetailsScreen(userName, plantName,
+                    diagnosisResults, imageFile.path, "0")),
+          );
+
+          // Navigator.of(context).pop();
+          // Utils.showLongToast(
+          //     "Name: " + str + " probability: " + prediction + "%");
+        }
+      } else if (isBlurOrTooDarkTooBrightImage == "CANT_DO_NATIVE") {
+        CheckImageWithTFLite checkImageWithTFLite = new CheckImageWithTFLite();
+        List res =
+            await checkImageWithTFLite.applyModelOnImage(imageFile) as List;
+
+        String str = res[0]["label"];
+        String _name = str.substring(0);
+        String prediction =
+            (res[0]['confidence'] * 100).toString().substring(0, 5);
+
+        print("name: $_name");
+        print("prediction: " + prediction + "%");
+
+        DiagnosisResult diagnosisResult = new DiagnosisResult();
+        diagnosisResult.diseaseName = _name;
+        diagnosisResult.diagnosisResponse = prediction;
+
+        List<DiagnosisResult> diagnosisResults = new List<DiagnosisResult>();
+        diagnosisResults.add(diagnosisResult);
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => PlantDetailsScreen(
+                  userName, plantName, diagnosisResults, imageFile.path, "0")),
+        );
+      } else {
+        // Utils.showLongToast("Please take another Image!");
+        // Utils.showLongToast("Image diagnosis failed!");
+      }
+    } else {
+      Utils.showLongToast("Image upload failed!");
+      // Utils.showLongToast("Image diagnosis failed!");
+    }
   }
 
   void uploadDummyImage(File imageFile, String plantName) {

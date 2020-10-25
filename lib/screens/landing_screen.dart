@@ -52,12 +52,6 @@ class _LandingScreenState extends State<LandingScreen>
 
   @override
   Widget build(BuildContext context) {
-//    for (int i = 0; i < plantImages.length; i++) {
-//      PlantImage plantImage = plantImages[i];
-//      log(plantImage.plantName);
-//      log(plantImage.imageUrl);
-//    }
-
     return Scaffold(
       body: Center(
         child: ListView(
@@ -73,17 +67,6 @@ class _LandingScreenState extends State<LandingScreen>
             Container(
               child: Column(
                 children: <Widget>[
-//                  Card(
-//                    child: Padding(
-//                      padding: const EdgeInsets.all(20.0),
-//                      child: Row(
-////                        mainAxisAlignment: MainAxisAlignment.center,
-//                        children: <Widget>[
-//
-//                        ],
-//                      ),
-//                    ),
-//                  ),
                   SizedBox(height: 20),
                   FlatButton(
                     onPressed: () {
@@ -143,7 +126,7 @@ class _LandingScreenState extends State<LandingScreen>
                     ),
                   ),
                   Text(
-                    "Maze",
+                    "Maize",
                     style: TextStyle(
                         fontSize: 15.0,
                         fontWeight: FontWeight.bold,

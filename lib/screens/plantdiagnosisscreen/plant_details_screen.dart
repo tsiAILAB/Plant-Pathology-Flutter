@@ -6,6 +6,7 @@ import 'package:group_radio_button/group_radio_button.dart';
 import 'package:pds/models/diagnosis_result.dart';
 import 'package:pds/services/request/upload_image.dart';
 import 'package:pds/utils/utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PlantDetailsScreen extends StatefulWidget {
   final List<DiagnosisResult> diagnosisResults;
@@ -30,6 +31,7 @@ class _PlantDetailsScreen extends State<PlantDetailsScreen> {
   final String plantName;
   final String imageUrl;
   final String responseId;
+  bool isSendImageToServer;
 
   _PlantDetailsScreen(this.userName, this.plantName, this.diagnosisResults,
       this.imageUrl, this.responseId);
@@ -123,7 +125,14 @@ class _PlantDetailsScreen extends State<PlantDetailsScreen> {
                             OutlineButton(
                               onPressed: () {
                                 if (_radioValue != null) {
-                                  _sendFeedBack(context);
+                                  //isSendImageTOServer=true for send feedback to the server
+                                  if (isSendImageToServer) {
+                                    _sendFeedBack(context);
+                                  } else {
+                                    Utils.showLongToast(
+                                        "Thank you for your feedback!");
+                                    Navigator.of(context).pop();
+                                  }
                                 } else {
                                   Utils.showLongToast(
                                       "Please select one feedback!");
@@ -156,9 +165,17 @@ class _PlantDetailsScreen extends State<PlantDetailsScreen> {
   @override
   void initState() {
     setState(() {
-      _radioValue = "";
+      _radioValue = "YES";
     });
     super.initState();
+    getPref();
+  }
+
+  getPref() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      isSendImageToServer = preferences.getBool("imageToServer") ?? false;
+    });
   }
 
   // ------ end: [add the next block] ------

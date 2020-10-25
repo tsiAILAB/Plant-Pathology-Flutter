@@ -257,20 +257,6 @@ class _LoginPageState extends State<LoginPage> implements LoginCallBack {
                     return "";
                   },
                 ),
-//                Row(
-//                  mainAxisAlignment: MainAxisAlignment.center,
-//                  children: <Widget>[
-//                    Checkbox(
-//                        value: rememberMeValue,
-//                        onChanged: (bool value) {
-//                          print(value);
-//                          setState(() {
-//                            rememberMeValue = value;
-//                          });
-//                        }),
-//                    Text('Remember me')
-//                  ],
-//                ),
                 SizedBox(height: 15.0),
                 Text(
                   'Already Registered?',

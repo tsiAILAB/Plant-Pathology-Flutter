@@ -71,14 +71,12 @@ flutter:
     - assets/data/flutter.db
     - assets/images/
     - assets/tflitemodels/
-    - assets/tflitemodels/etomato.tflite
-    - assets/tflitemodels/etomato.txt
-    - assets/tflitemodels/otomato.tflite
-    - assets/tflitemodels/otomato.txt
-    - assets/tflitemodels/vtomato.tflite
-    - assets/tflitemodels/vtomato.txt
     - assets/tflitemodels/tomato.tflite
     - assets/tflitemodels/tomato.txt
+    - assets/tflitemodels/potato.tflite
+    - assets/tflitemodels/potato.txt
+    - assets/tflitemodels/maize.tflite
+    - assets/tflitemodels/maize.txt
   # assets:
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
