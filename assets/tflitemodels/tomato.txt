@@ -1,0 +1,5 @@
+earlyBlight
+lateBlight
+leafCurl
+leafMold
+healthy
