@@ -52,6 +52,12 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
     } on PlatformException catch (e) {
       // _message = "Can't do native stuff ${e.message}.";
       _message = "CANT_DO_NATIVE";
+    } on MissingPluginException catch(e) {
+      _message = "CANT_DO_NATIVE";
+
+    } on Exception catch(e) {
+      _message = "CANT_DO_NATIVE";
+
     }
     print("nativeMessageGrabCut: $_message");
     return _message;
@@ -74,6 +80,12 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
     } on PlatformException catch (e) {
       // _message = "Can't do native stuff ${e.message}.";
       _message = "CANT_DO_NATIVE";
+    } on MissingPluginException catch(e) {
+      _message = "CANT_DO_NATIVE";
+
+    } on Exception catch(e) {
+      _message = "CANT_DO_NATIVE";
+
     }
     return _message;
   }
