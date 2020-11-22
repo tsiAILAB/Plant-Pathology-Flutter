@@ -1,3 +1,3 @@
 earlyblight
-lateblight
 healthy
+lateblight
