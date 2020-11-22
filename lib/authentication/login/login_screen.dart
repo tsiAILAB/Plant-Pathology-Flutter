@@ -177,7 +177,7 @@ class _LoginPageState extends State<LoginPage> implements LoginCallBack {
               new Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: new TextFormField(
-                  onSaved: (val) => _username = val,
+                  onSaved: (val) => _username = val.trim(),
                   decoration: new InputDecoration(labelText: "Username"),
                 ),
               ),
@@ -230,7 +230,7 @@ class _LoginPageState extends State<LoginPage> implements LoginCallBack {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 TextFormField(
-                  onSaved: (val) => _username = val,
+                  onSaved: (val) => _username = val.trim(),
                   decoration: InputDecoration(
                       prefixIcon: Icon(Icons.mail),
                       border: OutlineInputBorder(),
@@ -245,7 +245,7 @@ class _LoginPageState extends State<LoginPage> implements LoginCallBack {
                 SizedBox(height: 25.0),
                 TextFormField(
                   obscureText: true,
-                  onSaved: (val) => _password = val,
+                  onSaved: (val) => _password = val.trim(),
                   decoration: InputDecoration(
                       prefixIcon: Icon(Icons.security),
                       border: OutlineInputBorder(),
