@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as ImageLibrary;
 import 'package:pds/authentication/login/login_screen.dart';
-import 'package:pds/models/PlantImage.dart';
+import 'package:pds/models/plant_image.dart';
 import 'package:pds/screens/configuration/configuration_screen.dart';
 import 'package:pds/screens/plantdiagnosisscreen/take_image_screen.dart';
 import 'package:pds/services/response/plant_image_response.dart';

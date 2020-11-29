@@ -30,7 +30,7 @@ class DatabaseHelper {
     // Only copy if the database doesn't exist
     if (FileSystemEntity.typeSync(path) == FileSystemEntityType.notFound) {
       // Load database from asset and copy
-      ByteData data = await rootBundle.load(join('data', 'flutter.db'));
+      ByteData data = await rootBundle.load(join('assets/data', 'flutter.db'));
       List<int> bytes =
           data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 

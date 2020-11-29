@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:pds/models/PlantImage.dart';
+import 'package:pds/models/plant_image.dart';
 import 'package:pds/services/response/plant_image_response.dart';
 import 'package:pds/utils/utils.dart';
 

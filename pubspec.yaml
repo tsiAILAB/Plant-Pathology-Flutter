@@ -11,7 +11,7 @@ description: Plant diagnosis service.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 1.2.0+1
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -67,7 +67,6 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - data/flutter.db
     - assets/data/flutter.db
     - assets/images/
     - assets/tflitemodels/

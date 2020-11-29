@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image/image.dart' as ImageLibrary;
 import 'package:image_picker/image_picker.dart';
-import 'package:pds/models/PlantImage.dart';
+import 'package:pds/models/plant_image.dart';
 import 'package:pds/models/diagnosis_result.dart';
 import 'package:pds/screens/plantdiagnosisscreen/plant_details_screen.dart';
 import 'package:pds/services/request/upload_image.dart';
@@ -52,12 +52,10 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
     } on PlatformException catch (e) {
       // _message = "Can't do native stuff ${e.message}.";
       _message = "CANT_DO_NATIVE";
-    } on MissingPluginException catch(e) {
+    } on MissingPluginException catch (e) {
       _message = "CANT_DO_NATIVE";
-
-    } on Exception catch(e) {
+    } on Exception catch (e) {
       _message = "CANT_DO_NATIVE";
-
     }
     print("nativeMessageGrabCut: $_message");
     return _message;
@@ -80,12 +78,10 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
     } on PlatformException catch (e) {
       // _message = "Can't do native stuff ${e.message}.";
       _message = "CANT_DO_NATIVE";
-    } on MissingPluginException catch(e) {
+    } on MissingPluginException catch (e) {
       _message = "CANT_DO_NATIVE";
-
-    } on Exception catch(e) {
+    } on Exception catch (e) {
       _message = "CANT_DO_NATIVE";
-
     }
     return _message;
   }
@@ -440,10 +436,10 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
                               print(
                                   "isBlurOrTooDarkTooBrightImage: $isBlurOrTooDarkTooBrightImage");
                               if (isBlurOrTooDarkTooBrightImage == "false") {
-                                String grabCutImageFile = await _grabCutImage(
-                                    imageFile.path, fileName) as String;
+                                // String grabCutImageFile = await _grabCutImage(
+                                //     imageFile.path, fileName) as String;
 
-                                print("grabCutImageFile: " + grabCutImageFile);
+                                // print("grabCutImageFile: " + grabCutImageFile);
                                 print(
                                     "isSendImageToServer: $isSendImageToServer");
 
@@ -452,7 +448,8 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
                                   //     grabCutImageFile.split("/").last;
                                   uploadImage.uploadImage(
                                       context,
-                                      new File(grabCutImageFile),
+                                      // new File(grabCutImageFile),
+                                      imageFile,
                                       plantName,
                                       userName,
                                       "",
@@ -462,14 +459,14 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
                                   List res;
                                   CheckImageWithTFLite checkImageWithTFLite =
                                       new CheckImageWithTFLite();
-                                  if (grabCutImageFile != null) {
-                                    res = await checkImageWithTFLite
-                                        .applyModelOnImage(
-                                            new File(grabCutImageFile)) as List;
-                                  } else {
-                                    res = await checkImageWithTFLite
-                                        .applyModelOnImage(imageFile) as List;
-                                  }
+                                  // if (grabCutImageFile != null) {
+                                  //   res = await checkImageWithTFLite
+                                  //       .applyModelOnImage(
+                                  //           new File(grabCutImageFile)) as List;
+                                  // } else {
+                                  res = await checkImageWithTFLite
+                                      .applyModelOnImage(imageFile) as List;
+                                  // }
                                   String str = res[0]["label"];
                                   String _name = str.substring(0);
                                   String prediction =
@@ -639,29 +636,34 @@ class _TakeImageScreenState extends State<TakeImageScreen> {
 
       print("isBlurOrTooDarkTooBrightImage: $isBlurOrTooDarkTooBrightImage");
       if (isBlurOrTooDarkTooBrightImage == "false") {
-        String grabCutImageFile =
-            await _grabCutImage(imageFile.path, fileName) as String;
+        // String grabCutImageFile =
+        //     await _grabCutImage(imageFile.path, fileName) as String;
 
-        print("grabCutImageFile: " + grabCutImageFile);
+        // print("grabCutImageFile: " + grabCutImageFile);
         print("isSendImageToServer: $isSendImageToServer");
 
         if (isSendImageToServer) {
           // var grabCutFileName =
           //     grabCutImageFile.split("/").last;
           uploadImage.uploadImage(
-              context, new File(grabCutImageFile), plantName, userName, "", "");
+              // context, new File(grabCutImageFile), plantName, userName, "", "");
+              context,
+              imageFile,
+              plantName,
+              userName,
+              "",
+              "");
         } else {
           //check image by TFLite model
           List res;
           CheckImageWithTFLite checkImageWithTFLite =
               new CheckImageWithTFLite();
-          if (grabCutImageFile != null) {
-            res = await checkImageWithTFLite
-                .applyModelOnImage(new File(grabCutImageFile)) as List;
-          } else {
-            res =
-                await checkImageWithTFLite.applyModelOnImage(imageFile) as List;
-          }
+          // if (grabCutImageFile != null) {
+          //   res = await checkImageWithTFLite
+          //       .applyModelOnImage(new File(grabCutImageFile)) as List;
+          // } else {
+          res = await checkImageWithTFLite.applyModelOnImage(imageFile) as List;
+          // }
           String str = res[0]["label"];
           String _name = str.substring(0);
           String prediction =

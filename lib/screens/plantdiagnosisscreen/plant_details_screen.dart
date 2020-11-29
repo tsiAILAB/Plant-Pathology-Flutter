@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:group_radio_button/group_radio_button.dart';
 import 'package:pds/models/diagnosis_result.dart';
+import 'package:pds/models/result_feedback.dart';
 import 'package:pds/services/request/upload_image.dart';
+import 'package:pds/services/response/result_feedback_response.dart';
 import 'package:pds/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,16 +27,20 @@ class PlantDetailsScreen extends StatefulWidget {
       this.plantName, this.diagnosisResults, this.imageUrl, this.responseId);
 }
 
-class _PlantDetailsScreen extends State<PlantDetailsScreen> {
+class _PlantDetailsScreen extends State<PlantDetailsScreen>
+    implements ResultFeedbackCallBack {
   final List<DiagnosisResult> diagnosisResults;
   final String userName;
   final String plantName;
   final String imageUrl;
   final String responseId;
   bool isSendImageToServer;
+  ResultFeedbackResponse _resultFeedbackResponse;
 
   _PlantDetailsScreen(this.userName, this.plantName, this.diagnosisResults,
-      this.imageUrl, this.responseId);
+      this.imageUrl, this.responseId) {
+    _resultFeedbackResponse = new ResultFeedbackResponse(this);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,11 +129,14 @@ class _PlantDetailsScreen extends State<PlantDetailsScreen> {
                               ),
                             ),
                             OutlineButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_radioValue != null) {
                                   //isSendImageTOServer=true for send feedback to the server
+                                  await _saveFeedback(new ResultFeedback(
+                                      userName, plantName, _radioValue));
+
                                   if (isSendImageToServer) {
-                                    _sendFeedBack(context);
+                                    _sendFeedback(context);
                                   } else {
                                     Utils.showLongToast(
                                         "Thank you for your feedback!");
@@ -197,9 +206,34 @@ class _PlantDetailsScreen extends State<PlantDetailsScreen> {
     });
   }
 
-  void _sendFeedBack(BuildContext context) {
+  void _sendFeedback(BuildContext context) {
     UploadImage uploadImage = new UploadImage();
     uploadImage.uploadImage(
         context, null, plantName, userName, _radioValue, responseId);
+  }
+
+  Future _saveFeedback(ResultFeedback resultFeedback) async {
+    List<ResultFeedback> result =
+        await _resultFeedbackResponse.saveNewResultFeedback(resultFeedback);
+  }
+
+  @override
+  void onResultFeedbackError(String error) {
+    // TODO: implement onResultFeedbackError
+  }
+
+  @override
+  void onResultFeedbackSuccess(ResultFeedback resultFeedback) {
+    // TODO: implement onResultFeedbackSuccess
+  }
+
+  @override
+  void onResultFeedbacksSuccess(List<ResultFeedback> resultFeedback) {
+    // TODO: implement onResultFeedbacksSuccess
+
+    print("result: $resultFeedback  user: " +
+        resultFeedback.first.userName +
+        "FeedBack: " +
+        resultFeedback.first.feedback);
   }
 }

@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_curved_tab_bar/flutter_curved_tab_bar.dart';
-import 'package:pds/models/ApiUrl.dart';
-import 'package:pds/models/PlantImage.dart';
+import 'package:pds/models/api_url.dart';
+import 'package:pds/models/plant_image.dart';
 import 'package:pds/screens/config_screen.dart';
 import 'package:pds/screens/plantdiagnosisscreen/take_image_screen.dart';
 import 'package:pds/services/apis/all_apis.dart';

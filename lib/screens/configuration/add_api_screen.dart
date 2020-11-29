@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pds/models/ApiUrl.dart';
+import 'package:pds/models/api_url.dart';
 import 'package:pds/services/apis/all_apis.dart';
 import 'package:pds/services/response/api_url_response.dart';
 import 'package:pds/utils/utils.dart';

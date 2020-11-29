@@ -1,4 +1,4 @@
-import 'package:pds/models/PlantImage.dart';
+import 'package:pds/models/plant_image.dart';
 import 'package:pds/services/request/plant_image_request.dart';
 
 abstract class PlantImageCallBack {

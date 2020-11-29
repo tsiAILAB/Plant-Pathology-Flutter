@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:pds/data/database_helper.dart';
-import 'package:pds/models/ApiUrl.dart';
+import 'package:pds/models/api_url.dart';
 
 class ApiUrlCtr {
   DatabaseHelper con = new DatabaseHelper();

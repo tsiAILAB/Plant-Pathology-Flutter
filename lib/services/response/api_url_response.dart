@@ -1,4 +1,4 @@
-import 'package:pds/models/ApiUrl.dart';
+import 'package:pds/models/api_url.dart';
 import 'package:pds/services/request/api_url_request.dart';
 
 abstract class ApiUrlCallBack {

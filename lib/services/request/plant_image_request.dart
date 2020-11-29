@@ -1,5 +1,5 @@
 import 'package:pds/data/CtrQuery/plant_image_ctr.dart';
-import 'package:pds/models/PlantImage.dart';
+import 'package:pds/models/plant_image.dart';
 
 class PlantImageRequest {
   PlantImageCtr con = new PlantImageCtr();

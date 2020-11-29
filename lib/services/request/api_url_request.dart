@@ -1,5 +1,5 @@
 import 'package:pds/data/CtrQuery/api_url_ctr.dart';
-import 'package:pds/models/ApiUrl.dart';
+import 'package:pds/models/api_url.dart';
 
 class ApiUrlRequest {
   ApiUrlCtr con = new ApiUrlCtr();
