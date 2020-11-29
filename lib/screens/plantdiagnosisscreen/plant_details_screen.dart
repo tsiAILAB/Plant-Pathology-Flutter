@@ -231,7 +231,9 @@ class _PlantDetailsScreen extends State<PlantDetailsScreen>
   void onResultFeedbacksSuccess(List<ResultFeedback> resultFeedback) {
     // TODO: implement onResultFeedbacksSuccess
 
-    print("result: $resultFeedback  user: " +
+    print("PlantName: " +
+        resultFeedback.first.plantName +
+        " user: " +
         resultFeedback.first.userName +
         "FeedBack: " +
         resultFeedback.first.feedback);
